@@ -26,7 +26,7 @@ unsigned long last_ms = 0;
 
 void setup() {
 
-  player.play(tetris_melody, num_melody_notes);
+  player.play(tetris_melody, num_melody_notes, false);
 }
 
 void loop() {

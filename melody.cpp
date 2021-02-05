@@ -17,11 +17,12 @@ void MelodyPlayer::tempo (unsigned int quarters_per_min)
   tempo_ = (60 * 1000) / wholes_per_min;
 }
 
-void MelodyPlayer::play(const Note* melody, unsigned int n_elements)
+void MelodyPlayer::play(const Note* melody, unsigned int n_elements, bool loop)
 {
   melody_ = melody;
   num_notes_ = n_elements;
   note_index_ = 0;
+  loop_ = loop;
 
   play_current_note();
 }
@@ -40,6 +41,11 @@ void MelodyPlayer::update(unsigned long delta_ms)
 
 void MelodyPlayer::play_current_note()
 {
+  if (loop_ && note_index_ >= num_notes_)
+  {
+    note_index_ = 0;
+  }
+  
   if (note_index_ < num_notes_)
   {
     const Note& note = melody_[note_index_];
