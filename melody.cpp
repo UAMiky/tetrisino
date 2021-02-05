@@ -19,28 +19,43 @@ void MelodyPlayer::tempo (unsigned int quarters_per_min)
 
 void MelodyPlayer::play(const Note* melody, unsigned int n_elements)
 {
-  // iterate over the notes of the melody:
+  melody_ = melody;
+  num_notes_ = n_elements;
+  note_index_ = 0;
 
-  for (int thisNote = 0; thisNote < n_elements; thisNote++) {
+  play_current_note();
+}
 
-    const Note& note = melody[thisNote];
+void MelodyPlayer::update(unsigned long delta_ms)
+{
+  if (remaining_ms_ > delta_ms)
+  {
+    remaining_ms_ -= delta_ms;
+    return;
+  }
+
+  remaining_ms_ = 0;
+  play_current_note();
+}
+
+void MelodyPlayer::play_current_note()
+{
+  if (note_index_ < num_notes_)
+  {
+    const Note& note = melody_[note_index_];
+    note_index_++;
     
     // to calculate the note duration, take the tempo divided by the note type.
 
-    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+    //e.g. quarter note = tempo_ / 4, eighth note = tempo_ / 8, etc.
 
-    int noteDuration = tempo_ / note.duration;
+    auto duration = tempo_ / note.duration;
 
     // to distinguish the notes, play them for 90% of the duration.
     
-    tone(pin_, note.hz, noteDuration * 0.9);
+    tone(pin_, note.hz, duration * 0.9);
 
-    delay(noteDuration);
-
-    // stop the tone playing:
-
-    noTone(pin_);
-
+    remaining_ms_ += duration;
   }
 }
 

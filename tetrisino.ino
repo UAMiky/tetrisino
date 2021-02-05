@@ -14,6 +14,7 @@ const mp::Note melody[] = {
 };
 
 mp::MelodyPlayer player(8, 240);
+unsigned long last_ms = 0;
 
 void setup() {
 
@@ -21,6 +22,9 @@ void setup() {
 }
 
 void loop() {
+  unsigned long current_ms = millis();
+  unsigned long delta_ms = current_ms - last_ms;
+  last_ms = current_ms;
 
-  // no need to repeat the melody.
+  player.update(delta_ms);
 }
