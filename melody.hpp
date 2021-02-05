@@ -1,5 +1,12 @@
+/**
+ * A melody player for Arduino
+ * by Miguel Company (UAMike)
+ */
+
 #ifndef UAMIKE_MELODY_PLAYER_HPP
 #define UAMIKE_MELODY_PLAYER_HPP
+
+#include <arduino.h>
 
 namespace uamike {
 namespace melody_player {
@@ -24,7 +31,11 @@ struct MelodyPlayer
    * @param pin  Pin number on which the square waves will be generated.
    * @param qpm  Tempo in quarter notes per minute.
    */
-  MelodyPlayer(int pin, unsigned int qpm = 120);
+  MelodyPlayer(int pin, unsigned int qpm = 120)
+  {
+    pin_ = pin;
+    tempo(qpm);
+  }
 
   /**
    * Set a new tempo.
@@ -33,7 +44,14 @@ struct MelodyPlayer
    *
    * @note If a melody is currently playing, the new tempo will be applied on the next note played.
    */
-  void tempo(unsigned int qpm);
+  inline void tempo(unsigned int qpm)
+  {
+    // Use wholes per minute to avoid overflows
+    auto wholes_per_min = qpm / 4;
+
+    // Calc milliseconds per whole note.
+    tempo_ = (60 * 1000) / wholes_per_min;
+  }
 
   /**
    * Stop playing current melody and play a new one.
@@ -42,28 +60,70 @@ struct MelodyPlayer
    * @param num_notes  Number of notes in the melody.
    * @param loop       Whether the melody should be repeated or not.
    */
-  void play(const Note* melody, unsigned int num_notes, bool loop);
+  inline void play(const Note* melody, unsigned int num_notes, bool loop)
+  {
+    melody_ = melody;
+    num_notes_ = num_notes;
+    note_index_ = 0;
+    loop_ = loop;
+  
+    play_current_note();
+  }
 
   /**
    * Update object state. Should be called periodically.
    * 
    * @param delta_ms  Milliseconds elapsed since last time this method was called.
    */
-  void update(unsigned long delta_ms);
+  inline void update(unsigned long delta_ms)
+  {
+    if (remaining_ms_ > delta_ms)
+    {
+      remaining_ms_ -= delta_ms;
+      return;
+    }
+  
+    remaining_ms_ = 0;
+    play_current_note();
+  }
 
 private:
 
-  void play_current_note();
+  void play_current_note()
+  {
+    if (loop_ && note_index_ >= num_notes_)
+    {
+      note_index_ = 0;
+    }
+    
+    if (note_index_ < num_notes_)
+    {
+      const Note& note = melody_[note_index_];
+      note_index_++;
+      
+      // to calculate the note duration, take the tempo divided by the note type.
+  
+      //e.g. quarter note = tempo_ / 4, eighth note = tempo_ / 8, etc.
+  
+      auto duration = tempo_ / note.duration;
+  
+      // to distinguish the notes, play them for 90% of the duration.
+      
+      tone(pin_, note.hz, duration * 0.9);
+  
+      remaining_ms_ += duration;
+    }
+  }
   
   int pin_ = 0;
 
   unsigned int num_notes_ = 0;
   const Note* melody_ = nullptr;
+  bool loop_ = false;
   
   unsigned int note_index_ = 0;
   unsigned long tempo_ = 1000;
   unsigned long remaining_ms_ = 0;
-  bool loop_ = false;
 };
 
 } // namespace melody_player
