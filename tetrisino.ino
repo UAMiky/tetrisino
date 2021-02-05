@@ -13,7 +13,7 @@ const mp::Note melody[] = {
   {NOTE_C4, 4}, {NOTE_G3, 8}, {NOTE_G3, 8}, {NOTE_A3, 4}, {NOTE_G3, 4}, {0, 4}, {NOTE_B3, 4}, {NOTE_C4, 4}
 };
 
-mp::MelodyPlayer player(8);
+mp::MelodyPlayer player(8, 240);
 
 void setup() {
 

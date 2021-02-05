@@ -5,9 +5,16 @@
 namespace uamike {
 namespace melody_player {
 
-MelodyPlayer::MelodyPlayer(int pin)
+MelodyPlayer::MelodyPlayer(int pin, unsigned int qpm)
   : pin_(pin)
-{  
+{
+  tempo(qpm);
+}
+
+void MelodyPlayer::tempo (unsigned int quarters_per_min)
+{
+  auto wholes_per_min = quarters_per_min / 4;
+  tempo_ = (60 * 1000) / wholes_per_min;
 }
 
 void MelodyPlayer::play(const Note* melody, unsigned int n_elements)
@@ -18,21 +25,17 @@ void MelodyPlayer::play(const Note* melody, unsigned int n_elements)
 
     const Note& note = melody[thisNote];
     
-    // to calculate the note duration, take one second divided by the note type.
+    // to calculate the note duration, take the tempo divided by the note type.
 
     //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
 
-    int noteDuration = 1000 / note.duration;
+    int noteDuration = tempo_ / note.duration;
 
-    tone(pin_, note.hz, noteDuration);
+    // to distinguish the notes, play them for 90% of the duration.
+    
+    tone(pin_, note.hz, noteDuration * 0.9);
 
-    // to distinguish the notes, set a minimum time between them.
-
-    // the note's duration + 30% seems to work well:
-
-    int pauseBetweenNotes = noteDuration * 1.30;
-
-    delay(pauseBetweenNotes);
+    delay(noteDuration);
 
     // stop the tone playing:
 
