@@ -21,19 +21,20 @@ struct Note
 };
 
 /**
- * A melody player based on tone()
+ * A melody player based on tone().
+ * 
+ * @tparam pin_  Pin number on which the square waves will be generated.
  */
+template<int pin_>
 struct MelodyPlayer
 {
   /**
    * Construct a melody player object.
    *
-   * @param pin  Pin number on which the square waves will be generated.
    * @param qpm  Tempo in quarter notes per minute.
    */
-  MelodyPlayer(int pin, unsigned int qpm = 120)
+  MelodyPlayer(unsigned int qpm = 120)
   {
-    pin_ = pin;
     tempo(qpm);
   }
 
@@ -115,8 +116,6 @@ private:
     }
   }
   
-  int pin_ = 0;
-
   unsigned int num_notes_ = 0;
   const Note* melody_ = nullptr;
   bool loop_ = false;

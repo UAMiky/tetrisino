@@ -21,7 +21,7 @@ const mp::Note tetris_melody[] = {
 };
 constexpr unsigned int num_melody_notes = sizeof(tetris_melody) / sizeof(mp::Note);
 
-mp::MelodyPlayer player(8, 140);
+mp::MelodyPlayer<8> player(140);
 unsigned long last_ms = 0;
 
 void setup() {
