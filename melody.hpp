@@ -99,6 +99,8 @@ private:
     
     if (note_index_ < num_notes_)
     {
+      pinMode(pin_, OUTPUT);
+      
       const Note& note = melody_[note_index_];
       note_index_++;
       
