@@ -10,14 +10,14 @@
 namespace mp = uamike::melody_player;
 
 const mp::Note tetris_melody[] = {  
-  {NOTE_E5, 4}, {NOTE_B4, 8}, {NOTE_C5, 8}, {NOTE_D5, 4}, {NOTE_C5, 8}, {NOTE_B4, 8}, 
-  {NOTE_A4, 4}, {NOTE_A4, 8}, {NOTE_C5, 8}, {NOTE_E5, 4}, {NOTE_D5, 8}, {NOTE_C5, 8},
-  {NOTE_B4, 4}, {NOTE_B4, 8}, {NOTE_C5, 8}, {NOTE_D5, 4}, {NOTE_E5, 4},
-  {NOTE_C5, 4}, {NOTE_A4, 4},               {NOTE_A4, 4}, {0, 4},
-  {0, 8}, {NOTE_D5, 4}, {NOTE_F5, 8}, {NOTE_A5, 4}, {NOTE_G5, 8}, {NOTE_F5, 8},
-  {NOTE_E5, 4}, {NOTE_E5, 8}, {NOTE_C5, 8}, {NOTE_E5, 4}, {NOTE_D5, 8}, {NOTE_C5, 8},
-  {NOTE_B4, 4}, {NOTE_B4, 8}, {NOTE_C5, 8}, {NOTE_D5, 4}, {NOTE_E5, 4},
-  {NOTE_C5, 4}, {NOTE_A4, 4},               {NOTE_A4, 4}, {0, 4}
+  {NOTE_E5, 400}, {NOTE_B4, 800}, {NOTE_C5, 800}, {NOTE_D5, 400}, {NOTE_C5, 800}, {NOTE_B4, 800}, 
+  {NOTE_A4, 400}, {NOTE_A4, 800}, {NOTE_C5, 800}, {NOTE_E5, 400}, {NOTE_D5, 800}, {NOTE_C5, 800},
+  {NOTE_B4, 400}, {NOTE_B4, 800}, {NOTE_C5, 800}, {NOTE_D5, 400}, {NOTE_E5, 400},
+  {NOTE_C5, 400}, {NOTE_A4, 400}, {NOTE_A4, 400}, {0, 400},
+  {0, 800}, {NOTE_D5, 400}, {NOTE_F5, 800}, {NOTE_A5, 400}, {NOTE_G5, 800}, {NOTE_F5, 800},
+  {NOTE_E5, 266}, {NOTE_C5, 800}, {NOTE_E5, 400}, {NOTE_D5, 800}, {NOTE_C5, 800},
+  {NOTE_B4, 400}, {NOTE_B4, 800}, {NOTE_C5, 800}, {NOTE_D5, 400}, {NOTE_E5, 400},
+  {NOTE_C5, 400}, {NOTE_A4, 400}, {NOTE_A4, 400}, {0, 400}
 };
 constexpr unsigned int num_melody_notes = sizeof(tetris_melody) / sizeof(mp::Note);
 

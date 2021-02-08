@@ -17,7 +17,7 @@ namespace melody_player {
 struct Note
 {
   unsigned int hz;        ///< Note frequency in hertz (should be greater than 31)
-  unsigned int duration;  ///< Duration in musical notation (4 = quarter note, 8 = eighth note, ...)
+  unsigned int duration;  ///< Duration in musical notation x 100 (400 = quarter note, 800 = eighth note, ...)
 };
 
 /**
@@ -52,6 +52,7 @@ struct MelodyPlayer
 
     // Calc milliseconds per whole note.
     tempo_ = (60 * 1000) / wholes_per_min;
+    tempo_ *= 100;
   }
 
   /**
@@ -106,7 +107,7 @@ private:
       
       // to calculate the note duration, take the tempo divided by the note type.
   
-      //e.g. quarter note = tempo_ / 4, eighth note = tempo_ / 8, etc.
+      //e.g. quarter note = tempo_ / 400, eighth note = tempo_ / 800, etc.
   
       auto duration = tempo_ / note.duration;
   
