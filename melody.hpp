@@ -8,6 +8,8 @@
 
 #include <arduino.h>
 
+#include "IUpdatable.hpp"
+
 namespace uamike {
 namespace melody_player {
 
@@ -26,7 +28,7 @@ struct Note
  * @tparam pin_  Pin number on which the square waves will be generated.
  */
 template<int pin_>
-struct MelodyPlayer
+struct MelodyPlayer : public IUpdatable
 {
   /**
    * Construct a melody player object.
