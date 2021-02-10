@@ -80,4 +80,12 @@ void loop()
   {
     updatable->update(delta_ms);
   }
+
+  for (auto& button : buttons)
+  {
+    if (button.was_pressed_this_frame())
+    {
+      player.play(tetris_melody, num_melody_notes, false);
+    }
+  }
 }
