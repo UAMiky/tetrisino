@@ -4,10 +4,12 @@
   by Miguel Company (UAMike)
 */
 
-#include "pitches.h"
+#include "button.hpp"
 #include "melody.hpp"
+#include "pitches.h"
 
 namespace mp = uamike::melody_player;
+namespace ua = uamike::arduino;
 
 const mp::Note tetris_melody[] = {  
   {NOTE_E5, 400}, {NOTE_B4, 800}, {NOTE_C5, 800}, {NOTE_D5, 400}, {NOTE_C5, 800}, {NOTE_B4, 800}, 
@@ -21,18 +23,41 @@ const mp::Note tetris_melody[] = {
 };
 constexpr unsigned int num_melody_notes = sizeof(tetris_melody) / sizeof(mp::Note);
 
+// Hardware inputs
+ua::Button buttons[] {ua::Button(2), ua::Button(3), ua::Button(5), ua::Button(6)};
+
+// Hardware outputs
 mp::MelodyPlayer<8> player(140);
-unsigned long last_ms = 0;
 
-void setup() {
+// Updatables (in call order)
+uamike::IUpdatable* updatables[] =
+{
+  &buttons[0], &buttons[1], &buttons[2], &buttons[3], &player
+};
 
+void setup()
+{
+  // Initialize inputs
+  for (auto& button : buttons)
+  {
+    button.begin();
+  }
+
+  // Initialize outputs
+
+  // Let the music begin!
   player.play(tetris_melody, num_melody_notes, false);
 }
 
-void loop() {
+void loop()
+{
+  static unsigned long last_ms = 0;
   unsigned long current_ms = millis();
   unsigned long delta_ms = current_ms - last_ms;
   last_ms = current_ms;
 
-  player.update(delta_ms);
+  for (uamike::IUpdatable* updatable : updatables)
+  {
+    updatable->update(delta_ms);
+  }
 }
