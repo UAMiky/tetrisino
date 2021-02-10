@@ -8,6 +8,9 @@
 #include "melody.hpp"
 #include "pitches.h"
 
+#include <MD_MAX72xx.h>
+#include <SPI.h>
+
 namespace mp = uamike::melody_player;
 namespace ua = uamike::arduino;
 
@@ -27,6 +30,7 @@ constexpr unsigned int num_melody_notes = sizeof(tetris_melody) / sizeof(mp::Not
 ua::Button buttons[] {ua::Button(2), ua::Button(3), ua::Button(5), ua::Button(6)};
 
 // Hardware outputs
+MD_MAX72XX mx(MD_MAX72XX::FC16_HW, 10, 4);
 mp::MelodyPlayer<8> player(140);
 
 // Updatables (in call order)
@@ -44,9 +48,25 @@ void setup()
   }
 
   // Initialize outputs
+  mx.begin();
 
   // Let the music begin!
   player.play(tetris_melody, num_melody_notes, false);
+
+  /*
+  SPI.beginTransaction (SPISettings (8000000, MSBFIRST, SPI_MODE0));  // 8 MHz clock, MSB first, mode 0
+  for (byte i = 0; i < 8; ++i)
+  {
+    digitalWrite(10, LOW);
+    for (byte j = 0; j < 4; ++j)
+    {
+      SPI.transfer(i+1);
+      SPI.transfer(i+j);
+    }
+    digitalWrite(10, HIGH);
+  }
+  SPI.endTransaction();
+  */
 }
 
 void loop()
