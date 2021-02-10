@@ -46,8 +46,34 @@ bool Screen::check_piece(const Piece& piece, char x, char y)
   return true;
 }
 
-void add_piece(const Piece& piece, char x, char y)
+void Screen::add_piece(const Piece& piece, char x, char y)
 {
+  char segment_idx = y >> 3;
+  
+  for (char idx = 0; idx < 4; ++idx)
+  {
+    char off = idx + x;
+
+    // Out of field. Go to next column.
+    if (off < 0 || off >= 8) continue;
+
+    byte v = piece.data[idx];
+
+    // Piece column is empty. Go to next column.
+    if (0 == v) continue;
+    
+    char segment_off = y & 7;
+    if (y >= 0)
+    {
+      screen[segment_idx][off] |= v << segment_off;
+    }
+    
+    if ((segment_off >= 5) && (segment_idx < 3))
+    {
+      screen[segment_idx + 1][off] |= v << (8 - segment_off);
+    }
+  }
+  return true;
 }
 
 }
