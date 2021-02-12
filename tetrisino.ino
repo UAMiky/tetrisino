@@ -6,13 +6,16 @@
 
 #include "button.hpp"
 #include "melody.hpp"
+#include "piece.hpp"
 #include "pitches.h"
+#include "screen.hpp"
 
 #include <MD_MAX72xx.h>
 #include <SPI.h>
 
 namespace mp = uamike::melody_player;
 namespace ua = uamike::arduino;
+namespace tet = uamike::tetrisino;
 
 const mp::Note tetris_melody[] = {  
   {NOTE_E5, 400}, {NOTE_B4, 800}, {NOTE_C5, 800}, {NOTE_D5, 400}, {NOTE_C5, 800}, {NOTE_B4, 800}, 
@@ -39,8 +42,19 @@ uamike::IUpdatable* updatables[] =
   &buttons[0], &buttons[1], &buttons[2], &buttons[3], &player
 };
 
+tet::Screen screen;
+tet::Piece piece;
+char x = 2;
+char y = 31;
+
 void setup()
 {
+  // Initialize data
+  piece.data[0] = 0b0000;
+  piece.data[1] = 0b0110;
+  piece.data[2] = 0b0110;
+  piece.data[3] = 0b0000;
+
   // Initialize inputs
   for (auto& button : buttons)
   {
@@ -81,11 +95,32 @@ void loop()
     updatable->update(delta_ms);
   }
 
-  for (auto& button : buttons)
+  bool left = buttons[2].was_pressed_this_frame();
+  bool right = buttons[3].was_pressed_this_frame();
+  bool down = buttons[1].was_pressed_this_frame();
+  bool place = buttons[0].was_pressed_this_frame();
+
+  if (place)
   {
-    if (button.was_pressed_this_frame())
+    screen.add_piece(piece, x, y);
+  }
+  else if (left || right || down)
+  {
+    screen.remove_piece(piece, x, y);
+    
+    char save_x = x;
+    char save_y = y;
+    
+    if (left) x++;
+    if (right) x--;
+    if (down) y--;
+
+    if (!screen.check_piece(piece, x, y))
     {
-      player.play(tetris_melody, num_melody_notes, false);
+      x = save_x;
+      y = save_y;
     }
+    
+    screen.add_piece(piece, x, y);
   }
 }
