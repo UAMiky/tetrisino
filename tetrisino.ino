@@ -111,8 +111,8 @@ void loop()
     char save_x = x;
     char save_y = y;
     
-    if (left) x++;
-    if (right) x--;
+    if (left) x--;
+    if (right) x++;
     if (down) y--;
 
     if (!screen.check_piece(piece, x, y))
