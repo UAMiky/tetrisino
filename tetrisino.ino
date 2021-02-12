@@ -43,18 +43,12 @@ uamike::IUpdatable* updatables[] =
 };
 
 tet::Screen screen;
-tet::Piece piece;
+const tet::Piece* piece = tet::Piece::random_piece();
 char x = 2;
 char y = 31;
 
 void setup()
 {
-  // Initialize data
-  piece.data[0] = 0b0000;
-  piece.data[1] = 0b0110;
-  piece.data[2] = 0b0110;
-  piece.data[3] = 0b0000;
-
   // Initialize inputs
   for (auto& button : buttons)
   {
@@ -65,22 +59,7 @@ void setup()
   mx.begin();
 
   // Let the music begin!
-  player.play(tetris_melody, num_melody_notes, false);
-
-  /*
-  SPI.beginTransaction (SPISettings (8000000, MSBFIRST, SPI_MODE0));  // 8 MHz clock, MSB first, mode 0
-  for (byte i = 0; i < 8; ++i)
-  {
-    digitalWrite(10, LOW);
-    for (byte j = 0; j < 4; ++j)
-    {
-      SPI.transfer(i+1);
-      SPI.transfer(i+j);
-    }
-    digitalWrite(10, HIGH);
-  }
-  SPI.endTransaction();
-  */
+  player.play(tetris_melody, num_melody_notes, true);
 }
 
 void loop()
@@ -97,31 +76,61 @@ void loop()
 
   bool left = buttons[2].was_pressed_this_frame();
   bool right = buttons[3].was_pressed_this_frame();
-  bool down = buttons[1].was_pressed_this_frame();
+  bool rotate = buttons[1].was_pressed_this_frame();
   bool place = buttons[0].was_pressed_this_frame();
 
-  if (place)
+  static bool place_was_pressed = false;
+  place_was_pressed |= place;
+  bool should_go_down = place_was_pressed;
+
+  static unsigned long down_ms = 0;
+  down_ms += delta_ms;
+  if (down_ms >= 1500)
   {
+    down_ms -= 1500;
+    should_go_down = true;
+  }
+
+  if (should_go_down)
+  {
+    screen.remove_piece(*piece, x, y);
+    --y;
+    if (screen.check_piece(*piece, x, y))
+    {
+      screen.add_piece(*piece, x, y);
+      return;
+    }
+
+    ++y;
+    screen.add_piece(*piece, x, y);
+
+    // TODO: check lines
+
+    piece = tet::Piece::random_piece();
     x = 2;
     y = 31;
+    place_was_pressed = false;
   }
-  else if (left || right || down)
+
+  if (left || right || rotate)
   {
-    screen.remove_piece(piece, x, y);
+    screen.remove_piece(*piece, x, y);
     
     char save_x = x;
     char save_y = y;
+    const tet::Piece* save_piece = piece;
     
     if (left) x--;
     if (right) x++;
-    if (down) y--;
+    if (rotate) piece = tet::Piece::rotate(piece);
 
-    if (!screen.check_piece(piece, x, y))
+    if (!screen.check_piece(*piece, x, y))
     {
       x = save_x;
       y = save_y;
+      piece = save_piece;
     }
     
-    screen.add_piece(piece, x, y);
+    screen.add_piece(*piece, x, y);
   }
 }
