@@ -8,10 +8,12 @@
 namespace uamike {
 namespace tetrisino {
 
+//static
+
 /*
  * Coordinate system.
- * (0, 0) is bottom right.
- * (7, 31) is top left.
+ * (0, 0) is bottom left.
+ * (7, 31) is top right.
  */
 
 bool Screen::check_piece(const Piece& piece, char x, char y)
@@ -46,7 +48,7 @@ bool Screen::check_piece(const Piece& piece, char x, char y)
   return true;
 }
 
-void Screen::add_piece(const Piece& piece, char x, char y)
+void set_piece(Screen::ScreenState& screen, const Piece& piece, char x, char y, void (*f)(byte& v, byte mask))
 {
   char segment_idx = y >> 3;
   
@@ -65,15 +67,34 @@ void Screen::add_piece(const Piece& piece, char x, char y)
     char segment_off = y & 7;
     if (y >= 0)
     {
-      screen[segment_idx][off] |= v << segment_off;
+      f(screen[segment_idx][off], v << segment_off);
     }
     
     if ((segment_off >= 5) && (segment_idx < 3))
     {
-      screen[segment_idx + 1][off] |= v << (8 - segment_off);
+      f(screen[segment_idx + 1][off], v << (8 - segment_off));
     }
   }
-  return true;
+}
+
+static void add_value(byte& v, byte mask)
+{
+  v |= mask;
+}
+
+void Screen::add_piece(const Piece& piece, char x, char y)
+{
+  set_piece(screen, piece, x, y, add_value);
+}
+
+static void clear_value(byte& v, byte mask)
+{
+  v &= ~mask;
+}
+
+void Screen::remove_piece(const Piece& piece, char x, char y)
+{
+  set_piece(screen, piece, x, y, clear_value);
 }
 
 }
