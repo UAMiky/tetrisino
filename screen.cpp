@@ -8,13 +8,25 @@
 namespace uamike {
 namespace tetrisino {
 
-//static
-
 /*
  * Coordinate system.
  * (0, 0) is bottom left.
  * (7, 31) is top right.
  */
+
+static void print_column(const Screen::State& screen, char col)
+{
+  byte idx = 8 - col;
+  SPI.beginTransaction (SPISettings (8000000, MSBFIRST, SPI_MODE0));  // 8 MHz clock, MSB first, mode 0
+  digitalWrite(10, LOW);
+  for (char i = 3; i >= 0; --i)
+  {
+    SPI.transfer(idx);
+    SPI.transfer(screen[i][col]);
+  }
+  digitalWrite(10, HIGH);
+  SPI.endTransaction();
+}
 
 bool Screen::check_piece(const Piece& piece, char x, char y)
 {
@@ -74,6 +86,8 @@ void set_piece(Screen::State& screen, const Piece& piece, char x, char y, void (
     {
       f(screen[segment_idx + 1][off], v << (8 - segment_off));
     }
+
+    print_column(screen, off);
   }
 }
 
