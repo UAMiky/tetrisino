@@ -77,14 +77,14 @@ void set_piece(Screen::State& screen, const Piece& piece, char x, char y, void (
     if (0 == v) continue;
     
     char segment_off = y & 7;
-    if (y >= 0)
+    if (segment_idx >= 0)
     {
       f(screen[segment_idx][off], v << segment_off);
     }
     
     if ((segment_off >= 5) && (segment_idx < 3))
     {
-      f(screen[segment_idx + 1][off], v << (8 - segment_off));
+      f(screen[segment_idx + 1][off], v >> (8 - segment_off));
     }
 
     print_column(screen, off);
