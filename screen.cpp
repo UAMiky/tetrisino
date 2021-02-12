@@ -48,7 +48,7 @@ bool Screen::check_piece(const Piece& piece, char x, char y)
   return true;
 }
 
-void set_piece(Screen::ScreenState& screen, const Piece& piece, char x, char y, void (*f)(byte& v, byte mask))
+void set_piece(Screen::State& screen, const Piece& piece, char x, char y, void (*f)(byte& v, byte mask))
 {
   char segment_idx = y >> 3;
   
