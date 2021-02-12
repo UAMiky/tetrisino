@@ -8,7 +8,11 @@ namespace tetrisino {
 
 struct Piece
 {
+  byte next;
   byte data[4];
+
+  static const Piece* random_piece();
+  static const Piece* rotate(const Piece* piece);
 };
 
 }  // namespace tetrisino
