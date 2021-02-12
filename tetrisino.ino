@@ -102,7 +102,8 @@ void loop()
 
   if (place)
   {
-    screen.add_piece(piece, x, y);
+    x = 2;
+    y = 31;
   }
   else if (left || right || down)
   {
