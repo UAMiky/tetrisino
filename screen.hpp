@@ -10,12 +10,15 @@ struct Piece;
 
 struct Screen
 {
+  typedef byte Segment_t[8];
+  typedef Segment_t ScreenState[4];
+
   bool check_piece(const Piece& piece, char x, char y);
   void add_piece(const Piece& piece, char x, char y);
 
 private:
-  typedef byte Segment_t[8];
-  Segment_t screen[4] {};
+
+  ScreenState screen;
 };
 
 }  // namespace tetrisino
