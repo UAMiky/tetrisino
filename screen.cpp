@@ -54,7 +54,7 @@ bool Screen::check_piece(const Piece& piece, char x, char y)
     {
       // check on next segment (or the sky)
       sv = (segment_idx == 3) ? 0x00 : screen[segment_idx + 1][off];
-      if (0 != (sv & (v << (8 - segment_off)))) return false;
+      if (0 != (sv & (v >> (8 - segment_off)))) return false;
     }
   }
   return true;
