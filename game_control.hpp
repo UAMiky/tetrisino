@@ -22,6 +22,17 @@ struct GameControl : public IUpdatable
   
   inline void update(unsigned long ms) override
   {
+    if (nullptr == piece_)
+    {
+      screen_.add_piece(*next_piece_, 0, 28);
+      delay(500);
+
+      piece_ = next_piece_;
+      screen_.remove_piece(*next_piece_, 0, 28);
+      next_piece_ = Piece::random_piece();
+      screen_.add_piece(*next_piece_, 0, 28);
+    }
+    
     bool left = left_.was_pressed_this_frame();
     bool right = right_.was_pressed_this_frame();
     bool rotate = rotate_.was_pressed_this_frame();
@@ -84,7 +95,10 @@ struct GameControl : public IUpdatable
         player_.tempo(tempo_);
       }
   
-      piece_ = Piece::random_piece();
+      piece_ = next_piece_;
+      screen_.remove_piece(*next_piece_, 0, 28);
+      next_piece_ = Piece::random_piece();
+      screen_.add_piece(*next_piece_, 0, 28);
       x_ = 2;
       y_ = 23;
       place_was_pressed_ = false;
@@ -99,7 +113,8 @@ private:
   Player& player_;
   
   Screen screen_;
-  const Piece* piece_ = Piece::random_piece();
+  const Piece* next_piece_ = Piece::random_piece();
+  const Piece* piece_ = nullptr;
   char x_ = 2;
   char y_ = 23;
 
