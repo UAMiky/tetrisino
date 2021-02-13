@@ -18,6 +18,8 @@ struct Screen
   void remove_piece(const Piece& piece, char x, char y);
   unsigned int check_and_remove_lines(char y);
 
+  void game_over(byte score);
+
 private:
 
   State screen;

@@ -177,5 +177,29 @@ unsigned int Screen::check_and_remove_lines(char y)
   return ret_val;
 }
 
+void Screen::game_over(byte score)
+{
+  for (byte i = 0; i <= score; ++i)
+  {
+    unsigned long v = 0xFFFFFFFF >> (32 - i);
+    for (byte c = 1; c < 9; ++c)
+    {
+      SPI.beginTransaction (SPISettings (8000000, MSBFIRST, SPI_MODE0));  // 8 MHz clock, MSB first, mode 0
+      digitalWrite(10, LOW);
+      SPI.transfer(c);
+      SPI.transfer(static_cast<byte>((v >> 24) & 0xFF));
+      SPI.transfer(c);
+      SPI.transfer(static_cast<byte>((v >> 16) & 0xFF));
+      SPI.transfer(c);
+      SPI.transfer(static_cast<byte>((v >> 8) & 0xFF));
+      SPI.transfer(c);
+      SPI.transfer(static_cast<byte>(v & 0xFF));
+      digitalWrite(10, HIGH);
+      SPI.endTransaction();
+    }
+    delay(100);
+  }
+}
+
 }  // namespace tetrisino
 }  // namespace uamike

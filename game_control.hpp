@@ -4,8 +4,11 @@
 #include "IButton.hpp"
 #include "IUpdatable.hpp"
 #include "melody.hpp"
-#include "Piece.hpp"
+#include "piece.hpp"
+#include "pitches.h"
 #include "screen.hpp"
+
+#define INITIAL_Y 23
 
 namespace uamike {
 namespace tetrisino {
@@ -83,16 +86,39 @@ struct GameControl : public IUpdatable
   
       ++y_;
       screen_.add_piece(*piece_, x_, y_);
-  
+
+      // check for game over
+      if (y_ == INITIAL_Y)
+      {
+        // Stop music
+        player_.play(nullptr, 0, false);
+
+        // Play game-over tones
+        tone(8, NOTE_C4, 200);
+        delay(250);
+        tone(8, NOTE_B3, 200);
+        delay(250);
+        tone(8, NOTE_AS3, 200);
+        delay(250);
+        tone(8, NOTE_A3, 700);
+        delay(750);
+
+        // Show game score
+        unsigned long score = 32 * (1510 - delay_ms_) / 1500;
+        screen_.game_over(score);
+
+        while(true) delay(50000);
+      }
+
       // check lines
       unsigned int lines = screen_.check_and_remove_lines(y_);
       if (lines > 0)
       {
         tempo_ += lines;
-        delay_ms_ -= lines;
+        delay_ms_ -= lines * 10;
         if (delay_ms_ < 10) delay_ms_ = 10;
         if (tempo_ > 240) tempo_ = 240;
-        player_.tempo(tempo_);
+        player_.tempo(tempo_ / 10);
       }
   
       piece_ = next_piece_;
@@ -100,7 +126,7 @@ struct GameControl : public IUpdatable
       next_piece_ = Piece::random_piece();
       screen_.add_piece(*next_piece_, 0, 28);
       x_ = 2;
-      y_ = 23;
+      y_ = INITIAL_Y;
       place_was_pressed_ = false;
     }
   }
@@ -116,11 +142,11 @@ private:
   const Piece* next_piece_ = Piece::random_piece();
   const Piece* piece_ = nullptr;
   char x_ = 2;
-  char y_ = 23;
+  char y_ = INITIAL_Y;
 
   bool place_was_pressed_ = false;
   unsigned long down_ms_ = 0;
-  unsigned long delay_ms_ = 1500;
+  unsigned long delay_ms_ = 1510;
   unsigned int tempo_ = 140;
 };
 
