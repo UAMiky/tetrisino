@@ -86,7 +86,7 @@ struct GameControl : public IUpdatable
   
       piece_ = Piece::random_piece();
       x_ = 2;
-      y_ = 31;
+      y_ = 23;
       place_was_pressed_ = false;
     }
   }
@@ -101,7 +101,7 @@ private:
   Screen screen_;
   const Piece* piece_ = Piece::random_piece();
   char x_ = 2;
-  char y_ = 31;
+  char y_ = 23;
 
   bool place_was_pressed_ = false;
   unsigned long down_ms_ = 0;

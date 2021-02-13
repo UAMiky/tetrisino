@@ -14,12 +14,15 @@ namespace tetrisino {
  * (7, 31) is top right.
  */
 
+#define SCREEN_SKY_SEGMENT 3
+#define SCREEN_TOTAL_SEGMENTS 4
+
 static void print_column(const Screen::State& screen, char col)
 {
   byte idx = 8 - col;
   SPI.beginTransaction (SPISettings (8000000, MSBFIRST, SPI_MODE0));  // 8 MHz clock, MSB first, mode 0
   digitalWrite(10, LOW);
-  for (char i = 3; i >= 0; --i)
+  for (char i = SCREEN_TOTAL_SEGMENTS - 1; i >= 0; --i)
   {
     SPI.transfer(idx);
     SPI.transfer(screen[i][col]);
@@ -53,7 +56,7 @@ bool Screen::check_piece(const Piece& piece, char x, char y)
     if (segment_off >= 5)
     {
       // check on next segment (or the sky)
-      sv = (segment_idx == 3) ? 0x00 : screen[segment_idx + 1][off];
+      sv = (segment_idx == (SCREEN_SKY_SEGMENT - 1)) ? 0x00 : screen[segment_idx + 1][off];
       if (0 != (sv & (v >> (8 - segment_off)))) return false;
     }
   }
@@ -82,7 +85,7 @@ void set_piece(Screen::State& screen, const Piece& piece, char x, char y, void (
       f(screen[segment_idx][off], v << segment_off);
     }
     
-    if ((segment_off >= 5) && (segment_idx < 3))
+    if ((segment_off >= 5) && (segment_idx < (SCREEN_SKY_SEGMENT - 1)))
     {
       f(screen[segment_idx + 1][off], v >> (8 - segment_off));
     }
@@ -148,7 +151,7 @@ bool check_and_remove_line(Screen::State& screen, char y)
     byte v = screen[seg][c];
     mask = 0xFF << segment_off;
     v = (v & ~mask) | ((v & mask) >> 1);
-    while (seg < 3)
+    while (seg < (SCREEN_SKY_SEGMENT - 1))
     {
       byte next_v = screen[seg + 1][c];
       v |= (next_v << 7);
