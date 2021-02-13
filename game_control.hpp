@@ -51,7 +51,7 @@ struct GameControl : public IUpdatable
     place_was_pressed_ |= place;
   
     bool should_go_down = false;
-    unsigned long down_trigger_ms = place_was_pressed_ ? 10 : 1500;
+    unsigned long down_trigger_ms = place_was_pressed_ ? 10 : delay_ms_;
     down_ms_ += ms;
     if (down_ms_ >= down_trigger_ms)
     {
@@ -72,8 +72,9 @@ struct GameControl : public IUpdatable
       ++y_;
       screen_.add_piece(*piece_, x_, y_);
   
-      // TODO: check lines
-      screen_.check_and_remove_lines(y_);
+      // check lines
+      delay_ms_ -= screen_.check_and_remove_lines(y_);
+      if (delay_ms_ < 10) delay_ms_ = 10;
   
       piece_ = Piece::random_piece();
       x_ = 2;
@@ -96,6 +97,7 @@ private:
 
   bool place_was_pressed_ = false;
   unsigned long down_ms_ = 0;
+  unsigned long delay_ms_ = 1500;
 };
 
 }  // namespace tetrisino
