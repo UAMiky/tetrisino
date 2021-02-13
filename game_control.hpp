@@ -24,16 +24,38 @@ struct GameControl : public IUpdatable
     bool left = left_.was_pressed_this_frame();
     bool right = right_.was_pressed_this_frame();
     bool rotate = rotate_.was_pressed_this_frame();
-    bool place = rotate_.was_pressed_this_frame();
+    bool place = place_.was_pressed_this_frame();
   
-    place_was_pressed_ |= place;
-    bool should_go_down = place_was_pressed_;
-  
-    static unsigned long down_ms = 0;
-    down_ms += ms;
-    if (down_ms >= 1500)
+    if (left || right || rotate)
     {
-      down_ms -= 1500;
+      screen_.remove_piece(*piece_, x_, y_);
+      
+      char save_x = x_;
+      char save_y = y_;
+      const Piece* save_piece = piece_;
+      
+      if (left) x_--;
+      if (right) x_++;
+      if (rotate) piece_ = Piece::rotate(piece_);
+  
+      if (!screen_.check_piece(*piece_, x_, y_))
+      {
+        x_ = save_x;
+        y_ = save_y;
+        piece_ = save_piece;
+      }
+      
+      screen_.add_piece(*piece_, x_, y_);
+    }
+
+    place_was_pressed_ |= place;
+  
+    bool should_go_down = false;
+    unsigned long down_trigger_ms = place_was_pressed_ ? 10 : 1500;
+    down_ms_ += ms;
+    if (down_ms_ >= down_trigger_ms)
+    {
+      down_ms_ -= down_trigger_ms;
       should_go_down = true;
     }
   
@@ -57,28 +79,6 @@ struct GameControl : public IUpdatable
       y_ = 31;
       place_was_pressed_ = false;
     }
-  
-    if (left || right || rotate)
-    {
-      screen_.remove_piece(*piece_, x_, y_);
-      
-      char save_x = x_;
-      char save_y = y_;
-      const Piece* save_piece = piece_;
-      
-      if (left) x_--;
-      if (right) x_++;
-      if (rotate) piece_ = Piece::rotate(piece_);
-  
-      if (!screen_.check_piece(*piece_, x_, y_))
-      {
-        x_ = save_x;
-        y_ = save_y;
-        piece_ = save_piece;
-      }
-      
-      screen_.add_piece(*piece_, x_, y_);
-    }
   }
 
 private:
@@ -94,6 +94,7 @@ private:
   char y_ = 31;
 
   bool place_was_pressed_ = false;
+  unsigned long down_ms_ = 0;
 };
 
 }  // namespace tetrisino
