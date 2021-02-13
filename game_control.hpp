@@ -17,6 +17,7 @@ struct GameControl : public IUpdatable
   GameControl(IButton& left, IButton& right, IButton& rotate, IButton& place, Player& player)
     : left_(left), right_(right), rotate_(rotate), place_(place), player_(player)
   {
+    player_.tempo(tempo_);
   }
   
   inline void update(unsigned long ms) override
@@ -73,8 +74,15 @@ struct GameControl : public IUpdatable
       screen_.add_piece(*piece_, x_, y_);
   
       // check lines
-      delay_ms_ -= screen_.check_and_remove_lines(y_);
-      if (delay_ms_ < 10) delay_ms_ = 10;
+      unsigned int lines = screen_.check_and_remove_lines(y_);
+      if (lines > 0)
+      {
+        tempo_ += lines;
+        delay_ms_ -= lines;
+        if (delay_ms_ < 10) delay_ms_ = 10;
+        if (tempo_ > 240) tempo_ = 240;
+        player_.tempo(tempo_);
+      }
   
       piece_ = Piece::random_piece();
       x_ = 2;
@@ -98,6 +106,7 @@ private:
   bool place_was_pressed_ = false;
   unsigned long down_ms_ = 0;
   unsigned long delay_ms_ = 1500;
+  unsigned int tempo_ = 140;
 };
 
 }  // namespace tetrisino
