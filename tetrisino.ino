@@ -5,6 +5,7 @@
 */
 
 #include "button.hpp"
+#include "game_control.hpp"
 #include "melody.hpp"
 #include "piece.hpp"
 #include "pitches.h"
@@ -36,19 +37,20 @@ ua::Button buttons[] {ua::Button(2), ua::Button(3), ua::Button(5), ua::Button(6)
 MD_MAX72XX mx(MD_MAX72XX::FC16_HW, 10, 4);
 mp::MelodyPlayer<8> player(140);
 
+// Game logic
+tet::GameControl game(buttons[2], buttons[3], buttons[1], buttons[0], player);
+
 // Updatables (in call order)
 uamike::IUpdatable* updatables[] =
 {
-  &buttons[0], &buttons[1], &buttons[2], &buttons[3], &player
+  &buttons[0], &buttons[1], &buttons[2], &buttons[3], &player, &game
 };
-
-tet::Screen screen;
-const tet::Piece* piece = tet::Piece::random_piece();
-char x = 2;
-char y = 31;
 
 void setup()
 {
+  // Initialize system
+  randomSeed(analogRead(0));
+
   // Initialize inputs
   for (auto& button : buttons)
   {
@@ -72,65 +74,5 @@ void loop()
   for (uamike::IUpdatable* updatable : updatables)
   {
     updatable->update(delta_ms);
-  }
-
-  bool left = buttons[2].was_pressed_this_frame();
-  bool right = buttons[3].was_pressed_this_frame();
-  bool rotate = buttons[1].was_pressed_this_frame();
-  bool place = buttons[0].was_pressed_this_frame();
-
-  static bool place_was_pressed = false;
-  place_was_pressed |= place;
-  bool should_go_down = place_was_pressed;
-
-  static unsigned long down_ms = 0;
-  down_ms += delta_ms;
-  if (down_ms >= 1500)
-  {
-    down_ms -= 1500;
-    should_go_down = true;
-  }
-
-  if (should_go_down)
-  {
-    screen.remove_piece(*piece, x, y);
-    --y;
-    if (screen.check_piece(*piece, x, y))
-    {
-      screen.add_piece(*piece, x, y);
-      return;
-    }
-
-    ++y;
-    screen.add_piece(*piece, x, y);
-
-    // TODO: check lines
-
-    piece = tet::Piece::random_piece();
-    x = 2;
-    y = 31;
-    place_was_pressed = false;
-  }
-
-  if (left || right || rotate)
-  {
-    screen.remove_piece(*piece, x, y);
-    
-    char save_x = x;
-    char save_y = y;
-    const tet::Piece* save_piece = piece;
-    
-    if (left) x--;
-    if (right) x++;
-    if (rotate) piece = tet::Piece::rotate(piece);
-
-    if (!screen.check_piece(*piece, x, y))
-    {
-      x = save_x;
-      y = save_y;
-      piece = save_piece;
-    }
-    
-    screen.add_piece(*piece, x, y);
   }
 }
