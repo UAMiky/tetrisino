@@ -7,6 +7,8 @@
 #include "IButton.hpp"
 #include "IUpdatable.hpp"
 
+#define BUTTON_DEBOUNCE_TIME 100
+
 namespace uamike {
 namespace arduino {
 
@@ -24,8 +26,10 @@ struct Button : public IBeginable, public IUpdatable, public IButton
 
   inline void update(unsigned long ms)
   {
+    button_debounce_time_ += ms;
     bool pressed = digitalRead(pin_) == LOW;
-    pressed_this_frame_ = pressed && !is_pressed_;
+    pressed_this_frame_ = pressed && !is_pressed_ && button_debounce_time_ >= BUTTON_DEBOUNCE_TIME;
+    if (pressed_this_frame_) button_debounce_time_ = 0;
     is_pressed_ = pressed;
   }
   
@@ -44,6 +48,7 @@ private:
   int pin_;
   bool is_pressed_ = false;
   bool pressed_this_frame_ = false;
+  unsigned long button_debounce_time_ = 0xFFFF;
 };
 
 }  // namespace arduino
