@@ -16,6 +16,7 @@ struct Screen
   bool check_piece(const Piece& piece, char x, char y);
   void add_piece(const Piece& piece, char x, char y);
   void remove_piece(const Piece& piece, char x, char y);
+  unsigned int check_and_remove_lines(char y);
 
 private:
 

@@ -111,5 +111,68 @@ void Screen::remove_piece(const Piece& piece, char x, char y)
   set_piece(screen, piece, x, y, clear_value);
 }
 
+bool check_and_remove_line(Screen::State& screen, char y)
+{
+  // Underground lines are never removed
+  if (y < 0) return false;
+
+  // Point to segment
+  char segment_idx = y >> 3;
+  // Bit corresponding to row
+  char segment_off = y & 7;
+  byte mask = 1 << (segment_off);
+
+  // Stop checking if bit is not set in one of the columns
+  for (char c = 0; c < 8; ++c)
+  {
+    if ((screen[segment_idx][c] & mask) == 0) return false;
+  }
+
+  // All columns have the bit. User made a line!
+
+  // Make line disappear
+  for (char c = 0; c < 8; ++c)
+  {
+    screen[segment_idx][c] &= ~mask;
+    print_column(screen, c);
+  }
+
+  // Sound and wait
+  tone(8, 4*440, 200);
+  delay(250);
+
+  // Shift columns
+  for (char c = 0; c < 8; ++c)
+  {
+    char seg = segment_idx;
+    byte v = screen[seg][c];
+    mask = 0xFF << segment_off;
+    v = (v & ~mask) | ((v & mask) >> 1);
+    while (seg < 3)
+    {
+      byte next_v = screen[seg + 1][c];
+      v |= (next_v << 7);
+      screen[seg][c] = v;
+      v = next_v >> 1;
+      ++seg;
+    }
+    screen[seg][c] = v;
+    print_column(screen, c);
+  }
+
+  return true;
 }
+
+unsigned int Screen::check_and_remove_lines(char y)
+{
+  unsigned int ret_val = 0;
+  for (byte i = 0; i < 4; ++i)
+  {
+    if (check_and_remove_line(screen, y)) ret_val++;
+    else y++;
+  }
+  return ret_val;
 }
+
+}  // namespace tetrisino
+}  // namespace uamike

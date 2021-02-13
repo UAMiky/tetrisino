@@ -73,6 +73,7 @@ struct GameControl : public IUpdatable
       screen_.add_piece(*piece_, x_, y_);
   
       // TODO: check lines
+      screen_.check_and_remove_lines(y_);
   
       piece_ = Piece::random_piece();
       x_ = 2;
@@ -100,4 +101,4 @@ private:
 }  // namespace tetrisino
 }  // namespace uamike
 
-#endif  // UAMIKE_TETRISINO_PIECE_HPP
+#endif  // UAMIKE_TETRISINO_GAMECONTROL_HPP
