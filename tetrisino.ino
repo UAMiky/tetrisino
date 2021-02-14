@@ -7,12 +7,7 @@
 #include "button.hpp"
 #include "game_control.hpp"
 #include "melody.hpp"
-#include "piece.hpp"
 #include "pitches.h"
-#include "screen.hpp"
-
-#include <MD_MAX72xx.h>
-#include <SPI.h>
 
 namespace mp = uamike::melody_player;
 namespace ua = uamike::arduino;
@@ -34,7 +29,6 @@ constexpr unsigned int num_melody_notes = sizeof(tetris_melody) / sizeof(mp::Not
 ua::Button buttons[] {ua::Button(2), ua::Button(3), ua::Button(5), ua::Button(6)};
 
 // Hardware outputs
-MD_MAX72XX mx(MD_MAX72XX::FC16_HW, 10, 4);
 mp::MelodyPlayer<8> player(140);
 
 // Game logic
@@ -49,16 +43,13 @@ uamike::IUpdatable* updatables[] =
 void setup()
 {
   // Initialize system
-  randomSeed(analogRead(0));
+  game.begin();
 
   // Initialize inputs
   for (auto& button : buttons)
   {
     button.begin();
   }
-
-  // Initialize outputs
-  mx.begin();
 
   // Let the music begin!
   player.play(tetris_melody, num_melody_notes, true);

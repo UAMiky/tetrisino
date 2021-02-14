@@ -1,6 +1,7 @@
 #include "screen.hpp"
 
 #include <arduino.h>
+#include <MD_MAX72xx.h>
 #include <SPI.h>
 
 #include "piece.hpp"
@@ -16,6 +17,15 @@ namespace tetrisino {
 
 #define SCREEN_SKY_SEGMENT 3
 #define SCREEN_TOTAL_SEGMENTS 4
+
+void Screen::begin()
+{
+  {
+    MD_MAX72XX mx(MD_MAX72XX::FC16_HW, 10, 4);
+    mx.begin();
+  }
+  SPI.begin();
+}
 
 static void print_column(const Screen::State& screen, char col)
 {

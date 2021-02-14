@@ -13,6 +13,8 @@ struct Screen
   typedef byte Segment_t[8];
   typedef Segment_t State[4];
 
+  void begin();
+
   bool check_piece(const Piece& piece, char x, char y);
   void add_piece(const Piece& piece, char x, char y);
   void remove_piece(const Piece& piece, char x, char y);

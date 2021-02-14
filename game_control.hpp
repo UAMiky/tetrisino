@@ -22,20 +22,23 @@ struct GameControl : public IUpdatable
   {
     player_.tempo(tempo_);
   }
+
+  inline void begin()
+  {
+    randomSeed(analogRead(0));
+    screen_.begin();
+
+    screen_.add_piece(*next_piece_, 0, 28);
+    delay(500);
+
+    piece_ = next_piece_;
+    screen_.remove_piece(*next_piece_, 0, 28);
+    next_piece_ = Piece::random_piece();
+    screen_.add_piece(*next_piece_, 0, 28);
+  }
   
   inline void update(unsigned long ms) override
   {
-    if (nullptr == piece_)
-    {
-      screen_.add_piece(*next_piece_, 0, 28);
-      delay(500);
-
-      piece_ = next_piece_;
-      screen_.remove_piece(*next_piece_, 0, 28);
-      next_piece_ = Piece::random_piece();
-      screen_.add_piece(*next_piece_, 0, 28);
-    }
-    
     bool left = left_.was_pressed_this_frame();
     bool right = right_.was_pressed_this_frame();
     bool rotate = rotate_.was_pressed_this_frame();
@@ -118,7 +121,7 @@ struct GameControl : public IUpdatable
         delay_ms_ -= lines * 10;
         if (delay_ms_ < 10) delay_ms_ = 10;
         if (tempo_ > 240) tempo_ = 240;
-        player_.tempo(tempo_ / 10);
+        player_.tempo(tempo_);
       }
   
       piece_ = next_piece_;
