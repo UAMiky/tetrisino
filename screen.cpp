@@ -1,7 +1,6 @@
 #include "screen.hpp"
 
 #include <arduino.h>
-#include <MD_MAX72xx.h>
 #include <SPI.h>
 
 #include "piece.hpp"
@@ -18,15 +17,6 @@ namespace tetrisino {
 #define SCREEN_SKY_SEGMENT 3
 #define SCREEN_TOTAL_SEGMENTS 4
 
-void Screen::begin()
-{
-  {
-    MD_MAX72XX mx(MD_MAX72XX::FC16_HW, 10, 4);
-    mx.begin();
-  }
-  SPI.begin();
-}
-
 static void print_column(const Screen::State& screen, char col)
 {
   byte idx = 8 - col;
@@ -39,6 +29,34 @@ static void print_column(const Screen::State& screen, char col)
   }
   digitalWrite(10, HIGH);
   SPI.endTransaction();
+}
+
+void control(byte cmd, byte operand)
+{
+  SPI.beginTransaction (SPISettings (8000000, MSBFIRST, SPI_MODE0));  // 8 MHz clock, MSB first, mode 0
+  digitalWrite(10, LOW);
+  for (byte i = 0; i < SCREEN_TOTAL_SEGMENTS; ++i)
+  {
+    SPI.transfer(cmd);
+    SPI.transfer(operand);
+  }
+  digitalWrite(10, HIGH);
+  SPI.endTransaction();
+}
+
+void Screen::begin()
+{
+  SPI.begin();
+  pinMode(10, OUTPUT);
+  digitalWrite(10, HIGH);
+
+  control(0xF, 0);              // no test
+  control(0xB, 7);              // scan limit is set to max on startup
+  control(0xA, 7);              // set intensity to a reasonable value
+  control(0x9, 0);              // ensure no decoding (warm boot potential issue)
+  for (byte c = 0; c < 8; ++c)
+    print_column(screen, c);
+  control(0xC, 1);              // take the modules out of shutdown mode
 }
 
 bool Screen::check_piece(const Piece& piece, char x, char y)
