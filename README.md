@@ -2,7 +2,10 @@
 A tetris on Arduino
 
 ## Hardware used
-* 1 8x32 led matrix
+* Arduino uno
+* 8x32 led matrix connected to the SPI pins (13-clk, 11-din, 10-cs)
+* beeper connected through a potentiometer (volume regulation) to pin 8
+* 4 buttons: right (pin 6), left (pin 5), rotate (pin 3) and place (pin 2)
 
 ## Design considerations
 
