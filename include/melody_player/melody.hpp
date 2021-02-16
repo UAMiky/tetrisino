@@ -8,7 +8,8 @@
 
 #include <arduino.h>
 
-#include "IUpdatable.hpp"
+#include "IMelodyPlayer.hpp"
+#include "../interfaces/IUpdatable.hpp"
 
 namespace uamike {
 namespace melody_player {
@@ -28,7 +29,7 @@ struct Note
  * @tparam pin_  Pin number on which the square waves will be generated.
  */
 template<int pin_>
-struct MelodyPlayer : public IUpdatable
+struct MelodyPlayer : public IMelodyPlayer, public IUpdatable
 {
   /**
    * Construct a melody player object.
@@ -47,7 +48,7 @@ struct MelodyPlayer : public IUpdatable
    *
    * @note If a melody is currently playing, the new tempo will be applied on the next note played.
    */
-  inline void tempo(unsigned int qpm)
+  inline void tempo(unsigned int qpm) override
   {
     // Use wholes per minute to avoid overflows
     auto wholes_per_min = qpm / 4;
@@ -64,7 +65,7 @@ struct MelodyPlayer : public IUpdatable
    * @param num_notes  Number of notes in the melody.
    * @param loop       Whether the melody should be repeated or not.
    */
-  inline void play(const Note* melody, unsigned int num_notes, bool loop)
+  inline void play(const Note* melody, unsigned int num_notes, bool loop) override
   {
     melody_ = melody;
     num_notes_ = num_notes;
@@ -79,7 +80,7 @@ struct MelodyPlayer : public IUpdatable
    * 
    * @param delta_ms  Milliseconds elapsed since last time this method was called.
    */
-  inline void update(unsigned long delta_ms)
+  inline void update(unsigned long delta_ms) override
   {
     if (remaining_ms_ > delta_ms)
     {

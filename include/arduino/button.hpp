@@ -3,9 +3,9 @@
 
 #include <arduino.h>
 
-#include "IBeginable.hpp"
-#include "IButton.hpp"
-#include "IUpdatable.hpp"
+#include "../interfaces/IBeginable.hpp"
+#include "../interfaces/IButton.hpp"
+#include "../interfaces/IUpdatable.hpp"
 
 #define BUTTON_DEBOUNCE_TIME 100
 

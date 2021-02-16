@@ -4,9 +4,10 @@
   by Miguel Company (UAMike)
 */
 
-#include "button.hpp"
+#include "include/arduino/button.hpp"
+#include "include/melody_player/melody.hpp"
+
 #include "game_control.hpp"
-#include "melody.hpp"
 #include "pitches.h"
 
 namespace mp = uamike::melody_player;

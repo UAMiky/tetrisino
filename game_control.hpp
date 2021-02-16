@@ -1,9 +1,10 @@
 #ifndef UAMIKE_TETRISINO_GAMECONTROL_HPP
 #define UAMIKE_TETRISINO_GAMECONTROL_HPP
 
-#include "IButton.hpp"
-#include "IUpdatable.hpp"
-#include "melody.hpp"
+#include "include/interfaces/IButton.hpp"
+#include "include/interfaces/IUpdatable.hpp"
+#include "include/melody_player/IMelodyPlayer.hpp"
+
 #include "piece.hpp"
 #include "pitches.h"
 #include "screen.hpp"
@@ -15,7 +16,7 @@ namespace tetrisino {
 
 struct GameControl : public IUpdatable
 {
-  using Player = melody_player::MelodyPlayer<8>;
+  using Player = melody_player::IMelodyPlayer;
 
   GameControl(IButton& left, IButton& right, IButton& rotate, IButton& place, Player& player)
     : left_(left), right_(right), rotate_(rotate), place_(place), player_(player)
