@@ -5,6 +5,9 @@
 #include "include/interfaces/IUpdatable.hpp"
 #include "include/melody_player/IMelodyPlayer.hpp"
 
+#include "IInputController.hpp"
+#include "InputState.hpp"
+
 #include "piece.hpp"
 #include "pitches.h"
 #include "screen.hpp"
@@ -18,8 +21,8 @@ struct GameControl : public IUpdatable
 {
   using Player = melody_player::IMelodyPlayer;
 
-  GameControl(IButton& left, IButton& right, IButton& rotate, IButton& place, Player& player)
-    : left_(left), right_(right), rotate_(rotate), place_(place), player_(player)
+  GameControl(IInputController& input, Player& player)
+    : input_(input), player_(player)
   {
     player_.tempo(tempo_);
   }
@@ -40,12 +43,10 @@ struct GameControl : public IUpdatable
   
   inline void update(unsigned long ms) override
   {
-    bool left = left_.was_pressed_this_frame();
-    bool right = right_.was_pressed_this_frame();
-    bool rotate = rotate_.was_pressed_this_frame();
-    bool place = place_.was_pressed_this_frame();
+    InputState input;
+    input_.get_input_state(input);
   
-    if (left || right || rotate)
+    if (input.left || input.right || input.rotate)
     {
       screen_.remove_piece(*piece_, x_, y_);
       
@@ -53,9 +54,9 @@ struct GameControl : public IUpdatable
       char save_y = y_;
       const Piece* save_piece = piece_;
       
-      if (left) x_--;
-      if (right) x_++;
-      if (rotate) piece_ = Piece::rotate(piece_);
+      if (input.left) x_--;
+      if (input.right) x_++;
+      if (input.rotate) piece_ = Piece::rotate(piece_);
   
       if (!screen_.check_piece(*piece_, x_, y_))
       {
@@ -67,9 +68,9 @@ struct GameControl : public IUpdatable
       screen_.add_piece(*piece_, x_, y_);
     }
 
-    place_was_pressed_ |= place;
+    place_was_pressed_ |= input.place;
   
-    bool should_go_down = false;
+    bool should_go_down = input.down;
     unsigned long down_trigger_ms = place_was_pressed_ ? 10 : delay_ms_;
     down_ms_ += ms;
     if (down_ms_ >= down_trigger_ms)
@@ -136,10 +137,7 @@ struct GameControl : public IUpdatable
   }
 
 private:
-  IButton& left_;
-  IButton& right_;
-  IButton& rotate_;
-  IButton& place_;
+  IInputController& input_;
   Player& player_;
   
   Screen screen_;

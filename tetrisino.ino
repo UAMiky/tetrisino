@@ -7,6 +7,7 @@
 #include "include/arduino/button.hpp"
 #include "include/melody_player/melody.hpp"
 
+#include "FourButtonsInputController.hpp"
 #include "game_control.hpp"
 #include "pitches.h"
 
@@ -28,12 +29,13 @@ constexpr unsigned int num_melody_notes = sizeof(tetris_melody) / sizeof(mp::Not
 
 // Hardware inputs
 ua::Button buttons[] {ua::Button(2), ua::Button(3), ua::Button(5), ua::Button(6)};
+tet::FourButtonsInputController input(buttons[2], buttons[3], buttons[1], buttons[0]);
 
 // Hardware outputs
 mp::MelodyPlayer<8> player(140);
 
 // Game logic
-tet::GameControl game(buttons[2], buttons[3], buttons[1], buttons[0], player);
+tet::GameControl game(input, player);
 
 // Updatables (in call order)
 uamike::IUpdatable* updatables[] =
