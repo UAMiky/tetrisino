@@ -9,19 +9,11 @@
 #include <arduino.h>
 
 #include "IMelodyPlayer.hpp"
+#include "note.hpp"
 #include "../interfaces/IUpdatable.hpp"
 
 namespace uamike {
 namespace melody_player {
-
-/**
- * Represents a note in a melody.
- */
-struct Note
-{
-  unsigned int hz;        ///< Note frequency in hertz (should be greater than 31)
-  unsigned int duration;  ///< Duration in musical notation x 100 (400 = quarter note, 800 = eighth note, ...)
-};
 
 /**
  * A melody player based on tone().
