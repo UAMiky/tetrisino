@@ -96,7 +96,7 @@ struct GameControl : public IUpdatable
       if (y_ == INITIAL_Y)
       {
         // Stop music
-        player_.play(nullptr, 0, false);
+        player_.stop();
 
         // Play game-over tones
         tone(audio_pin_, NOTE_C4, 200);

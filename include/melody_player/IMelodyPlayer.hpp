@@ -6,6 +6,8 @@
 #ifndef UAMIKE_MELODY_PLAYER_IMELODYPLAYER_HPP
 #define UAMIKE_MELODY_PLAYER_IMELODYPLAYER_HPP
 
+#include "../interfaces/IStoppable.hpp"
+
 namespace uamike {
 namespace melody_player {
 
@@ -13,7 +15,7 @@ namespace melody_player {
 struct Note;
 
 /// An interface for a melody player
-struct IMelodyPlayer
+struct IMelodyPlayer : public IStoppable
 {
   /**
    * Set a new tempo.

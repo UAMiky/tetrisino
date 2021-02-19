@@ -74,6 +74,12 @@ struct MelodyPlayer : public IMelodyPlayer, public IUpdatable
   
     play_current_note();
   }
+  
+  inline void stop() override
+  {
+	noTone(pin_);
+	play(nullptr, 0, false);
+  }
 
   /**
    * Update object state. Should be called periodically.
