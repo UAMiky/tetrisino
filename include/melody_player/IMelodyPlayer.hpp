@@ -34,6 +34,11 @@ struct IMelodyPlayer : public IStoppable
    * @param loop       Whether the melody should be repeated or not.
    */
   inline virtual void play(const Note* melody, unsigned int num_notes, bool loop) = 0;
+  
+  /**
+   * @return Wheter a melody is being played or not
+   */
+  inline virtual bool is_playing() const = 0;
 };
 
 } // namespace melody_player

@@ -80,6 +80,11 @@ struct MelodyPlayer : public IMelodyPlayer, public IUpdatable
 	noTone(pin_);
 	play(nullptr, 0, false);
   }
+  
+  inline bool is_playing() const override
+  {
+	return note_index_ < num_notes_;
+  }
 
   /**
    * Update object state. Should be called periodically.
