@@ -21,8 +21,8 @@ struct GameControl : public IUpdatable
 {
   using Player = melody_player::IMelodyPlayer;
 
-  GameControl(IInputController& input, Player& player)
-    : input_(input), player_(player)
+  GameControl(IInputController& input, Player& player, int audio_pin)
+    : input_(input), player_(player), audio_pin_(audio_pin)
   {
     player_.tempo(tempo_);
   }
@@ -99,13 +99,13 @@ struct GameControl : public IUpdatable
         player_.play(nullptr, 0, false);
 
         // Play game-over tones
-        tone(8, NOTE_C4, 200);
+        tone(audio_pin_, NOTE_C4, 200);
         delay(250);
-        tone(8, NOTE_B3, 200);
+        tone(audio_pin_, NOTE_B3, 200);
         delay(250);
-        tone(8, NOTE_AS3, 200);
+        tone(audio_pin_, NOTE_AS3, 200);
         delay(250);
-        tone(8, NOTE_A3, 700);
+        tone(audio_pin_, NOTE_A3, 700);
         delay(750);
 
         // Show game score
@@ -116,7 +116,7 @@ struct GameControl : public IUpdatable
       }
 
       // check lines
-      unsigned int lines = screen_.check_and_remove_lines(y_);
+      unsigned int lines = screen_.check_and_remove_lines(y_, audio_pin_);
       if (lines > 0)
       {
         tempo_ += lines;
@@ -139,6 +139,7 @@ struct GameControl : public IUpdatable
 private:
   IInputController& input_;
   Player& player_;
+  int audio_pin_;
   
   Screen screen_;
   const Piece* next_piece_ = Piece::random_piece();

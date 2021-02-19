@@ -35,7 +35,7 @@ tet::FourButtonsInputController input(buttons[2], buttons[3], buttons[1], button
 mp::MelodyPlayer<8> player(140);
 
 // Game logic
-tet::GameControl game(input, player);
+tet::GameControl game(input, player, 8);
 
 // Updatables (in call order)
 uamike::IUpdatable* updatables[] =

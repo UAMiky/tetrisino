@@ -142,7 +142,7 @@ void Screen::remove_piece(const Piece& piece, char x, char y)
   set_piece(screen, piece, x, y, clear_value);
 }
 
-bool check_and_remove_line(Screen::State& screen, char y)
+bool check_and_remove_line(Screen::State& screen, char y, int audio_pin)
 {
   // Underground lines are never removed
   if (y < 0) return false;
@@ -169,7 +169,7 @@ bool check_and_remove_line(Screen::State& screen, char y)
   }
 
   // Sound and wait
-  tone(8, 4*440, 200);
+  tone(audio_pin, 4*440, 200);
   delay(250);
 
   // Shift columns
@@ -194,12 +194,12 @@ bool check_and_remove_line(Screen::State& screen, char y)
   return true;
 }
 
-unsigned int Screen::check_and_remove_lines(char y)
+unsigned int Screen::check_and_remove_lines(char y, int audio_pin)
 {
   unsigned int ret_val = 0;
   for (byte i = 0; i < 4; ++i)
   {
-    if (check_and_remove_line(screen, y)) ret_val++;
+    if (check_and_remove_line(screen, y, audio_pin)) ret_val++;
     else y++;
   }
   return ret_val;
