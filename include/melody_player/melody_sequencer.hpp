@@ -96,9 +96,9 @@ private:
     if (melody_index_ < num_melodies_)
     {
       const MelodyEntry& melody = melodies_[melody_index_];
-      player_.play(melody.melody, melody.num_notes, false);
       if (melody_times_ < melody.num_times)
       {
+        player_.play(melody.melody, melody.num_notes, false);
         ++melody_times_;
       }
       else

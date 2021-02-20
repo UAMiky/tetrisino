@@ -24,12 +24,12 @@ const mp::Note tetris_melody[] = {
   {0, 800}, {NOTE_D5, 400}, {NOTE_F5, 800}, {NOTE_A5, 400}, {NOTE_G5, 800}, {NOTE_F5, 800},
   {NOTE_E5, 266}, {NOTE_C5, 800}, {NOTE_E5, 400}, {NOTE_D5, 800}, {NOTE_C5, 800},
   {NOTE_B4, 400}, {NOTE_B4, 800}, {NOTE_C5, 800}, {NOTE_D5, 400}, {NOTE_E5, 400},
-  {NOTE_C5, 400}, {NOTE_A4, 400}, {NOTE_A4, 400}, {0, 400}
+  {NOTE_C5, 400}, {NOTE_A4, 400}, {NOTE_A4, 400}, {0, 400}, {0, 0}
 };
 constexpr unsigned int num_melody_notes = sizeof(tetris_melody) / sizeof(mp::Note);
 
 const mp::MelodyEntry tetris_melody_seq[] = {
-  {tetris_melody, num_melody_notes, 1}
+  {tetris_melody, num_melody_notes, 2}
 };
 
 // Hardware inputs
@@ -59,9 +59,6 @@ void setup()
   {
     button.begin();
   }
-
-  // Let the music begin!
-  player.play(tetris_melody, num_melody_notes, true);
 }
 
 void loop()
