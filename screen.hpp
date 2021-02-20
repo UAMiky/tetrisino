@@ -20,7 +20,7 @@ struct Screen
   void remove_piece(const Piece& piece, char x, char y);
   unsigned int check_and_remove_lines(char y, int audio_pin);
 
-  void game_over(byte score);
+  void game_over(byte score, int audio_pin);
 
 private:
 

@@ -205,9 +205,10 @@ unsigned int Screen::check_and_remove_lines(char y, int audio_pin)
   return ret_val;
 }
 
-void Screen::game_over(byte score)
+void Screen::game_over(byte score, int audio_pin)
 {
-  for (byte i = 0; i <= score; ++i)
+  int freq = 440;
+  for (byte i = 0; i <= score && i <= 32; ++i)
   {
     unsigned long v = 0xFFFFFFFF >> (32 - i);
     for (byte c = 1; c < 9; ++c)
@@ -225,6 +226,8 @@ void Screen::game_over(byte score)
       digitalWrite(10, HIGH);
       SPI.endTransaction();
     }
+    tone(audio_pin, freq, 250);
+    freq = (freq * 1100) / 1000;
     delay(100);
   }
 }

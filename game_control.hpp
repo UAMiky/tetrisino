@@ -109,8 +109,8 @@ struct GameControl : public IUpdatable
         delay(750);
 
         // Show game score
-        unsigned long score = 32 * (1510 - delay_ms_) / 1500;
-        screen_.game_over(score);
+        unsigned long score = (32 * (1510 - delay_ms_)) / 1500;
+        screen_.game_over(score + 1, audio_pin_);
 
         while(true) delay(50000);
       }
