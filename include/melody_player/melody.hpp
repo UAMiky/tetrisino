@@ -75,7 +75,7 @@ struct MelodyPlayer : public IMelodyPlayer, public IUpdatable
   
   inline bool is_playing() const override
   {
-	return note_index_ < num_notes_;
+	return (remaining_ms_ > 0) || (note_index_ < num_notes_);
   }
 
   /**

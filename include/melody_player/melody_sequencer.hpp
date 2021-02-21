@@ -67,7 +67,7 @@ struct MelodySequencer : public IMelodyPlayer, public IUpdatable
   
   inline bool is_playing() const override
   {
-    return melody_index_ < num_melodies_;
+    return player_.is_playing();
   }
 
   /**
