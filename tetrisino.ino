@@ -16,7 +16,7 @@ namespace mp = uamike::melody_player;
 namespace ua = uamike::arduino;
 namespace tet = uamike::tetrisino;
 
-const mp::Note tetris_melody[] = {  
+const mp::Note tetris_part_1[] = {
   {NOTE_E5, 400}, {NOTE_B4, 800}, {NOTE_C5, 800}, {NOTE_D5, 400}, {NOTE_C5, 800}, {NOTE_B4, 800}, 
   {NOTE_A4, 400}, {NOTE_A4, 800}, {NOTE_C5, 800}, {NOTE_E5, 400}, {NOTE_D5, 800}, {NOTE_C5, 800},
   {NOTE_B4, 400}, {NOTE_B4, 800}, {NOTE_C5, 800}, {NOTE_D5, 400}, {NOTE_E5, 400},
@@ -24,12 +24,22 @@ const mp::Note tetris_melody[] = {
   {0, 800}, {NOTE_D5, 400}, {NOTE_F5, 800}, {NOTE_A5, 400}, {NOTE_G5, 800}, {NOTE_F5, 800},
   {NOTE_E5, 266}, {NOTE_C5, 800}, {NOTE_E5, 400}, {NOTE_D5, 800}, {NOTE_C5, 800},
   {NOTE_B4, 400}, {NOTE_B4, 800}, {NOTE_C5, 800}, {NOTE_D5, 400}, {NOTE_E5, 400},
-  {NOTE_C5, 400}, {NOTE_A4, 400}, {NOTE_A4, 400}, {0, 400}, {0, 0}
+  {NOTE_C5, 400}, {NOTE_A4, 400}, {NOTE_A4, 400}, {0, 400}
 };
-constexpr unsigned int num_melody_notes = sizeof(tetris_melody) / sizeof(mp::Note);
+constexpr unsigned int num_notes_1 = sizeof(tetris_part_1) / sizeof(mp::Note);
+
+const mp::Note tetris_part_2[] = {
+  {NOTE_E4, 200}, {NOTE_C4, 200}, {NOTE_D4, 200}, {NOTE_B3, 200},
+  {NOTE_C4, 200}, {NOTE_A3, 200}, {NOTE_GS3, 200}, {NOTE_B3, 200},
+  {NOTE_E4, 200}, {NOTE_C4, 200}, {NOTE_D4, 200}, {NOTE_B3, 200},
+  {NOTE_C4, 400}, {NOTE_E4, 400}, {NOTE_A4, 400}, {NOTE_A4, 400},
+  {NOTE_GS4, 100}
+};
+constexpr unsigned int num_notes_2 = sizeof(tetris_part_2) / sizeof(mp::Note);
 
 const mp::MelodyEntry tetris_melody_seq[] = {
-  {tetris_melody, num_melody_notes, 2}
+  {tetris_part_1, num_notes_1, 2},
+  {tetris_part_2, num_notes_2, 1}
 };
 
 // Hardware inputs
@@ -38,7 +48,7 @@ tet::FourButtonsInputController input(buttons[2], buttons[3], buttons[1], button
 
 // Hardware outputs
 mp::MelodyPlayer<8> player(140);
-mp::MelodySequencer sequencer(player, tetris_melody_seq, 1, true);
+mp::MelodySequencer sequencer(player, tetris_melody_seq, 2, true);
 
 // Game logic
 tet::GameControl game(input, sequencer, 8);
