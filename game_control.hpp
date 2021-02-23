@@ -14,6 +14,10 @@
 
 #define INITIAL_Y 23
 
+#define STATE_INIT 0
+#define STATE_GAME 1
+#define STATE_END  2
+
 namespace uamike {
 namespace tetrisino {
 
@@ -31,21 +35,72 @@ struct GameControl : public IUpdatable
   {
     randomSeed(analogRead(0));
     screen_.begin();
-
-    screen_.add_piece(*next_piece_, 0, 28);
-    delay(500);
-
-    piece_ = next_piece_;
-    screen_.remove_piece(*next_piece_, 0, 28);
-    next_piece_ = Piece::random_piece();
-    screen_.add_piece(*next_piece_, 0, 28);
   }
   
   inline void update(unsigned long ms) override
   {
     InputState input;
     input_.get_input_state(input);
+
+    switch (state_)
+    {
+      case STATE_INIT: update_on_init(ms, input); break;
+      case STATE_GAME: update_on_game(ms, input); break;
+      case STATE_END:  update_on_end(ms, input); break;
+    }  
+  }
+
+private:
+  void start_game()
+  {
+    piece_ = next_piece_;
+    screen_.remove_piece(*next_piece_, 0, 28);
+    next_piece_ = Piece::random_piece();
+    screen_.add_piece(*next_piece_, 0, 28);
+
+    state_ = STATE_GAME;
+  }
+
+  void game_over()
+  {
+    // Stop music
+    player_.stop();
+
+    // Play game-over tones
+    tone(audio_pin_, NOTE_C4, 200);
+    delay(250);
+    tone(audio_pin_, NOTE_B3, 200);
+    delay(250);
+    tone(audio_pin_, NOTE_AS3, 200);
+    delay(250);
+    tone(audio_pin_, NOTE_A3, 700);
+    delay(750);
+
+    // Show game score
+    unsigned long score = (32 * (1510 - delay_ms_)) / 1500;
+    screen_.game_over(score + 1, audio_pin_);
+
+    state_ = STATE_END;
+  }
   
+  void update_on_init(unsigned long ms, const InputState& input)
+  {
+    // TODO: Initial animation
+    down_ms_ += ms;
+    if (down_ms_ >= 4000)
+    {
+      down_ms_ = 0;
+      start_game();
+    }
+    else if ((piece_ != next_piece_) && (down_ms_ >= 1000))
+    {
+      screen_.add_piece(*next_piece_, 0, 28);
+      piece_ = next_piece_;
+    }
+  }
+
+  void update_on_game(unsigned long ms, const InputState& input)
+  {
     if (input.left || input.right || input.rotate)
     {
       screen_.remove_piece(*piece_, x_, y_);
@@ -95,24 +150,8 @@ struct GameControl : public IUpdatable
       // check for game over
       if (y_ == INITIAL_Y)
       {
-        // Stop music
-        player_.stop();
-
-        // Play game-over tones
-        tone(audio_pin_, NOTE_C4, 200);
-        delay(250);
-        tone(audio_pin_, NOTE_B3, 200);
-        delay(250);
-        tone(audio_pin_, NOTE_AS3, 200);
-        delay(250);
-        tone(audio_pin_, NOTE_A3, 700);
-        delay(750);
-
-        // Show game score
-        unsigned long score = (32 * (1510 - delay_ms_)) / 1500;
-        screen_.game_over(score + 1, audio_pin_);
-
-        while(true) delay(50000);
+        game_over();
+        return;
       }
 
       // check lines
@@ -136,7 +175,14 @@ struct GameControl : public IUpdatable
     }
   }
 
-private:
+  void update_on_end(unsigned long ms, const InputState& input)
+  {
+    if (input.place)
+    {
+      // TODO: restart
+    }
+  }
+
   IInputController& input_;
   Player& player_;
   int audio_pin_;
@@ -151,6 +197,7 @@ private:
   unsigned long down_ms_ = 0;
   unsigned long delay_ms_ = 1510;
   unsigned int tempo_ = 140;
+  byte state_ = STATE_INIT;
 };
 
 }  // namespace tetrisino
