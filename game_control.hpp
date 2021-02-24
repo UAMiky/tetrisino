@@ -51,6 +51,48 @@ struct GameControl : public IUpdatable
   }
 
 private:
+  // Returns false when it should be stopped (i.e. tries to move down and gets stuck)
+  bool move_piece(const Piece*& piece, const InputState& input, char& x, char& y)
+  {
+    bool ret_val = true;
+
+    if (input.left || input.right || input.rotate)
+    {
+      screen_.remove_piece(*piece, x, y);
+      
+      char save_x = x;
+      char save_y = y;
+      const Piece* save_piece = piece;
+      
+      if (input.left) x--;
+      if (input.right) x++;
+      if (input.rotate) piece = Piece::rotate(piece);
+  
+      if (!screen_.check_piece(*piece, x, y))
+      {
+        x = save_x;
+        y = save_y;
+        piece = save_piece;
+      }
+      
+      screen_.add_piece(*piece, x, y);
+    }
+
+    if (input.down)
+    {
+      screen_.remove_piece(*piece, x, y);
+      --y;
+      ret_val = screen_.check_piece(*piece, x, y);
+      if (!ret_val)
+      {
+        ++y;
+      }
+      screen_.add_piece(*piece, x, y);
+    }
+    
+    return ret_val;
+  }
+  
   void start_game()
   {
     piece_ = next_piece_;
@@ -99,54 +141,21 @@ private:
     }
   }
 
-  void update_on_game(unsigned long ms, const InputState& input)
+  void update_on_game(unsigned long ms, InputState& input)
   {
-    if (input.left || input.right || input.rotate)
-    {
-      screen_.remove_piece(*piece_, x_, y_);
-      
-      char save_x = x_;
-      char save_y = y_;
-      const Piece* save_piece = piece_;
-      
-      if (input.left) x_--;
-      if (input.right) x_++;
-      if (input.rotate) piece_ = Piece::rotate(piece_);
-  
-      if (!screen_.check_piece(*piece_, x_, y_))
-      {
-        x_ = save_x;
-        y_ = save_y;
-        piece_ = save_piece;
-      }
-      
-      screen_.add_piece(*piece_, x_, y_);
-    }
-
     place_was_pressed_ |= input.place;
   
-    bool should_go_down = input.down;
     unsigned long down_trigger_ms = place_was_pressed_ ? 10 : delay_ms_;
     down_ms_ += ms;
     if (down_ms_ >= down_trigger_ms)
     {
       down_ms_ -= down_trigger_ms;
-      should_go_down = true;
+      input.down = true;
     }
-  
-    if (should_go_down)
-    {
-      screen_.remove_piece(*piece_, x_, y_);
-      --y_;
-      if (screen_.check_piece(*piece_, x_, y_))
-      {
-        screen_.add_piece(*piece_, x_, y_);
-        return;
-      }
-  
-      ++y_;
-      screen_.add_piece(*piece_, x_, y_);
 
+    bool could_move = move_piece(piece_, input, x_, y_);  
+    if (!could_move)
+    {
       // check for game over
       if (y_ == INITIAL_Y)
       {
