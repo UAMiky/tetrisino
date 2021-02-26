@@ -41,6 +41,11 @@ static const Piece* c_pieces[] =
   &piece_Z0, &piece_Z90
 };
 
+static const Piece* Piece::get_piece(byte idx)
+{
+  return (idx < 19) ? c_pieces[idx] : nullptr;
+}
+
 static const byte c_pieces_idx[] = {0, 1, 3, 7, 11, 15, 17};
 const Piece* Piece::random_piece()
 {
