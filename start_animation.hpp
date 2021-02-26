@@ -195,6 +195,11 @@ struct InitialAnimation
     step_count_ = 0;
   }
 
+  void stop()
+  {
+    action_index_ = c_total_actions;
+  }
+
   bool is_playing()
   {
     return action_index_ < c_total_actions;

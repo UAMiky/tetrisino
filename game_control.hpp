@@ -111,13 +111,22 @@ private:
   void update_on_init(unsigned long ms, const InputState& input)
   {
     down_ms_ += ms;
-    if (down_ms_ >= 4000)
+
+    if (input.place)
+    {
+      animation_.stop();
+      down_ms_ = 5000;
+      piece_ = nullptr;
+    }
+
+    if (down_ms_ >= 8000)
     {
       down_ms_ = 0;
       start_game();
     }
-    else if ((piece_ != next_piece_) && (down_ms_ >= 1000))
+    else if ((piece_ != next_piece_) && (down_ms_ >= 5000))
     {
+      screen_.clear();
       screen_.add_piece(*next_piece_, 0, 28);
       piece_ = next_piece_;
     }
