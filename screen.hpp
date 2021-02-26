@@ -3,6 +3,8 @@
 
 #include <arduino.h>
 
+#include "InputState.hpp"
+
 namespace uamike {
 namespace tetrisino {
 
@@ -18,6 +20,7 @@ struct Screen
   bool check_piece(const Piece& piece, char x, char y);
   void add_piece(const Piece& piece, char x, char y);
   void remove_piece(const Piece& piece, char x, char y);
+  bool move_piece(const Piece*& piece, const InputState& input, char& x, char& y);
   unsigned int check_and_remove_lines(char y, int audio_pin);
 
   void game_over(byte score, int audio_pin);

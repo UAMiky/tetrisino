@@ -142,6 +142,47 @@ void Screen::remove_piece(const Piece& piece, char x, char y)
   set_piece(screen, piece, x, y, clear_value);
 }
 
+bool Screen::move_piece(const Piece*& piece, const InputState& input, char& x, char& y)
+{
+  bool ret_val = true;
+
+  if (input.left || input.right || input.rotate)
+  {
+    remove_piece(*piece, x, y);
+    
+    char save_x = x;
+    char save_y = y;
+    const Piece* save_piece = piece;
+    
+    if (input.left) x--;
+    if (input.right) x++;
+    if (input.rotate) piece = Piece::rotate(piece);
+
+    if (!check_piece(*piece, x, y))
+    {
+      x = save_x;
+      y = save_y;
+      piece = save_piece;
+    }
+    
+    add_piece(*piece, x, y);
+  }
+
+  if (input.down)
+  {
+    remove_piece(*piece, x, y);
+    --y;
+    ret_val = check_piece(*piece, x, y);
+    if (!ret_val)
+    {
+      ++y;
+    }
+    add_piece(*piece, x, y);
+  }
+  
+  return ret_val;
+}
+  
 bool check_and_remove_line(Screen::State& screen, char y, int audio_pin)
 {
   // Underground lines are never removed

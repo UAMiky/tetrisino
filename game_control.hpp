@@ -51,48 +51,6 @@ struct GameControl : public IUpdatable
   }
 
 private:
-  // Returns false when it should be stopped (i.e. tries to move down and gets stuck)
-  bool move_piece(const Piece*& piece, const InputState& input, char& x, char& y)
-  {
-    bool ret_val = true;
-
-    if (input.left || input.right || input.rotate)
-    {
-      screen_.remove_piece(*piece, x, y);
-      
-      char save_x = x;
-      char save_y = y;
-      const Piece* save_piece = piece;
-      
-      if (input.left) x--;
-      if (input.right) x++;
-      if (input.rotate) piece = Piece::rotate(piece);
-  
-      if (!screen_.check_piece(*piece, x, y))
-      {
-        x = save_x;
-        y = save_y;
-        piece = save_piece;
-      }
-      
-      screen_.add_piece(*piece, x, y);
-    }
-
-    if (input.down)
-    {
-      screen_.remove_piece(*piece, x, y);
-      --y;
-      ret_val = screen_.check_piece(*piece, x, y);
-      if (!ret_val)
-      {
-        ++y;
-      }
-      screen_.add_piece(*piece, x, y);
-    }
-    
-    return ret_val;
-  }
-  
   void start_game()
   {
     piece_ = next_piece_;
@@ -153,7 +111,7 @@ private:
       input.down = true;
     }
 
-    bool could_move = move_piece(piece_, input, x_, y_);  
+    bool could_move = screen_.move_piece(piece_, input, x_, y_);  
     if (!could_move)
     {
       // check for game over
