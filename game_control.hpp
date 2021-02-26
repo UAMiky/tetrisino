@@ -11,6 +11,7 @@
 #include "piece.hpp"
 #include "pitches.h"
 #include "screen.hpp"
+#include "start_animation.hpp"
 
 #define INITIAL_Y 23
 
@@ -68,12 +69,16 @@ private:
     screen_.clear();
     player_.tempo(tempo_);
     player_.play(nullptr, 0, true);
+
+    animation_.begin();
   }
 
   void start_game()
   {
     screen_.clear();
-    
+
+    x_ = 2;
+    y_ = INITIAL_Y;
     piece_ = next_piece_;
     next_piece_ = Piece::random_piece();
     screen_.add_piece(*next_piece_, 0, 28);
@@ -105,7 +110,6 @@ private:
   
   void update_on_init(unsigned long ms, const InputState& input)
   {
-    // TODO: Initial animation
     down_ms_ += ms;
     if (down_ms_ >= 4000)
     {
@@ -116,6 +120,11 @@ private:
     {
       screen_.add_piece(*next_piece_, 0, 28);
       piece_ = next_piece_;
+    }
+    else if ((down_ms_ >= 100) && animation_.is_playing())
+    {
+      animation_.step(screen_, piece_, x_, y_);
+      down_ms_ = 0;
     }
   }
 
@@ -175,6 +184,7 @@ private:
   int audio_pin_;
   
   Screen screen_;
+  InitialAnimation animation_;
   const Piece* next_piece_ = Piece::random_piece();
   const Piece* piece_ = nullptr;
   char x_ = 2;
