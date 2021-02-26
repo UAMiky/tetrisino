@@ -7,11 +7,11 @@ namespace tetrisino {
 /// Input state
 struct InputState
 {
-  bool left = false;    ///< Move piece left
-  bool right = false;   ///< Move piece right
-  bool down = false;    ///< Move piece down
-  bool rotate = false;  ///< Rotate piece
-  bool place = false;   ///< Drop piece
+  bool left;    ///< Move piece left
+  bool right;   ///< Move piece right
+  bool down;    ///< Move piece down
+  bool rotate;  ///< Rotate piece
+  bool place;   ///< Drop piece
 };
 
 }  // namespace tetrisino

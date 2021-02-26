@@ -39,7 +39,7 @@ struct GameControl : public IUpdatable
   
   inline void update(unsigned long ms) override
   {
-    InputState input;
+    InputState input{false, false, false, false, false};
     input_.get_input_state(input);
 
     switch (state_)
