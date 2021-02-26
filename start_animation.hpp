@@ -16,12 +16,176 @@ struct InitialAnimationStep
 };
 
 constexpr InputState c_input_down {false, false, true, false, false};
+constexpr InputState c_input_down_left {true, false, true, false, false};
+constexpr InputState c_input_down_right {false, true, true, false, false};
+constexpr InputState c_input_rotate {false, false, false, true, false};
 
 const InitialAnimationStep animation[] =
 {
-  {4, c_input_down, 36}
+  //* S
+  //   x
+  // xxx
+  {4, c_input_down_right, 36},
+  {128, {}, 0},
+  // xxx
+  //   x
+  {8, c_input_down_right, 36},
+  {128, {}, 0},
+  // x
+  // xxx
+  {8, c_input_down, 4},
+  {255, c_input_rotate, 2},
+  {255, c_input_down_right, 36},
+  {128, {}, 0},
+  // xxx
+  // x
+  {4, c_input_down, 4},
+  {255, c_input_rotate, 2},
+  {255, c_input_down_right, 36},
+  {128, {}, 0},
+  //*/
+
+  //* I
+  //  x
+  // xxx
+  {13, c_input_down_left, 36},
+  {128, {}, 0},
+  //  x
+  //  x
+  //  x
+  //  x
+  {2, c_input_down, 3},
+  {255, c_input_down_left, 3},
+  {255, c_input_down, 36},
+  {128, {}, 0},
+  // xxx
+  //  x
+  {13, c_input_down_left, 3},
+  {255, c_input_rotate, 2},
+  {255, c_input_down_left, 36},
+  {128, {}, 0},
+  //*/
+
+  //* R
+  //   xx
+  //    x
+  //    x
+  {5, c_input_down_right, 36},
+  {128, {}, 0},
+  //    x
+  //   xx
+  //   x
+  {18, c_input_down_right, 36},
+  {128, {}, 0},
+  //  x
+  //  x
+  //  x
+  //  x
+  {2, c_input_down, 4},
+  {255, c_input_down_right, 1},
+  {255, c_input_down, 36},
+  {128, {}, 0},
+  //  x
+  //  x
+  // xx
+  {7, c_input_down, 4},
+  {255, c_input_down_right, 2},
+  {255, c_input_down, 36},
+  {128, {}, 0},
+  //  x
+  //  x
+  // xx
+  {7, c_input_down, 4},
+  {255, c_input_rotate, 1},
+  {255, c_input_down_right, 36},
+  {128, {}, 0},
+  //*/
+
+  //* T
+  //  xx
+  //  xx
+  {0, c_input_down, 3},
+  {255, c_input_down_left, 2},
+  {255, c_input_down, 36},
+  {128, {}, 0},
+  //  xx
+  //  xx
+  {0, c_input_down, 3},
+  {255, c_input_down_left, 2},
+  {255, c_input_down, 36},
+  {128, {}, 0},
+  //  xx
+  //  xx
+  {0, c_input_down, 3},
+  {255, c_input_down_left, 2},
+  {255, c_input_down, 36},
+  {128, {}, 0},
+  // xxxx
+  {1, c_input_down, 3},
+  {255, c_input_down_left, 36},
+  {128, {}, 0},
+  // xxxx
+  {1, c_input_down, 3},
+  {255, c_input_down_left, 36},
+  {128, {}, 0},
+  //*/
+
+  //* E
+  // x
+  // xxx
+  {8, c_input_down, 1},
+  {255, c_input_rotate, 2},
+  {255, c_input_down_right, 36},
+  {128, {}, 0},
+  // xxx
+  // x
+  {4, c_input_down, 1},
+  {255, c_input_rotate, 2},
+  {255, c_input_down_right, 36},
+  {128, {}, 0},
+  // x
+  // xxx
+  {8, c_input_down, 1},
+  {255, c_input_rotate, 2},
+  {255, c_input_down_right, 36},
+  {128, {}, 0},
+  // xxx
+  // x
+  {4, c_input_rotate, 2},
+  {255, c_input_down_right, 36},
+  {128, {}, 0},
+  //*/
+
+  //* T
+  //  xx
+  //  xx
+  {0, c_input_down, 3},
+  {255, c_input_down_left, 2},
+  {255, c_input_down, 36},
+  {128, {}, 0},
+  //  xx
+  //  xx
+  {0, c_input_down, 3},
+  {255, c_input_down_left, 2},
+  {255, c_input_down, 36},
+  {128, {}, 0},
+  //  xx
+  //  xx
+  {0, c_input_down, 3},
+  {255, c_input_down_left, 2},
+  {255, c_input_down, 36},
+  {128, {}, 0},
+  // xxxx
+  {1, c_input_down, 3},
+  {255, c_input_down_left, 36},
+  {128, {}, 0},
+  // xxxx
+  {1, c_input_down, 3},
+  {255, c_input_down_left, 36},
+  {128, {}, 0},
+  //*/
 };
-constexpr byte c_total_actions = 1;
+constexpr byte c_total_actions = sizeof(animation)/sizeof(animation[0]);
 
 struct InitialAnimation
 {
@@ -53,7 +217,11 @@ struct InitialAnimation
       ++action_index_;
       if (action_index_ < c_total_actions)
       {
-        piece = Piece::get_piece(animation[action_index_].piece_id);
+        byte next_piece = animation[action_index_].piece_id;
+        if (next_piece != 255)
+        {
+          piece = Piece::get_piece(next_piece);
+        }
       }
     }
   }
