@@ -35,6 +35,7 @@ struct GameControl : public IUpdatable
   {
     randomSeed(analogRead(0));
     screen_.begin();
+    init_game();
   }
   
   inline void update(unsigned long ms) override
@@ -51,10 +52,29 @@ struct GameControl : public IUpdatable
   }
 
 private:
+  void init_game()
+  {
+    next_piece_ = Piece::random_piece();
+    piece_ = nullptr;
+    x_ = 2;
+    y_ = INITIAL_Y;
+
+    place_was_pressed_ = false;
+    down_ms_ = 0;
+    delay_ms_ = 1510;
+    tempo_ = 140;
+    state_ = STATE_INIT;
+
+    screen_.clear();
+    player_.tempo(tempo_);
+    player_.play(nullptr, 0, true);
+  }
+
   void start_game()
   {
+    screen_.clear();
+    
     piece_ = next_piece_;
-    screen_.remove_piece(*next_piece_, 0, 28);
     next_piece_ = Piece::random_piece();
     screen_.add_piece(*next_piece_, 0, 28);
 
@@ -146,7 +166,7 @@ private:
   {
     if (input.place)
     {
-      // TODO: restart
+      init_game();
     }
   }
 

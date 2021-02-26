@@ -48,21 +48,20 @@ struct MelodySequencer : public IMelodyPlayer, public IUpdatable
    * @param num_notes  Number of notes in the melody.
    * @param loop       Whether the melody should be repeated or not.
    */
-  inline void play(const Note* melody, unsigned int num_notes, bool loop) override
+  inline void play(const Note* /*melody*/, unsigned int /*num_notes*/, bool loop) override
   {
     stop();
-    player_.play(melody, num_notes, loop);
+	melody_times_ = 0;
+	loop_ = loop;
   }
   
   inline void stop() override
   {
     player_.stop();
     
-    melodies_ = nullptr;
-    num_melodies_ = 0;
+    melody_index_ = num_melodies_;
+	melody_times_ = 0;
     loop_ = false;
-
-    melody_index_ = 0;
   }
   
   inline bool is_playing() const override
