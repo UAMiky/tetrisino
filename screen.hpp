@@ -17,6 +17,7 @@ struct Screen
 
   void begin();
 
+  void clear();
   bool check_piece(const Piece& piece, char x, char y);
   void add_piece(const Piece& piece, char x, char y);
   void remove_piece(const Piece& piece, char x, char y);

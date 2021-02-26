@@ -54,9 +54,15 @@ void Screen::begin()
   control(0xB, 7);              // scan limit is set to max on startup
   control(0xA, 7);              // set intensity to a reasonable value
   control(0x9, 0);              // ensure no decoding (warm boot potential issue)
+  clear();
+  control(0xC, 1);              // take the modules out of shutdown mode
+}
+
+void Screen::clear()
+{
+  memset(screen, 0, sizeof(screen));
   for (byte c = 0; c < 8; ++c)
     print_column(screen, c);
-  control(0xC, 1);              // take the modules out of shutdown mode
 }
 
 bool Screen::check_piece(const Piece& piece, char x, char y)
